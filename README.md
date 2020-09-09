@@ -29,6 +29,3 @@ $ rails new sample_app -d postgresql -m template.rb
 ### Boot it up
 
 `$ rails server`
-
-### Boot it up (with foreman)
-Run `foreman start`. Head to `locahost:5000` to see your app. You'll have hot reloading on `js` and `css` and `scss/sass` files by default. Feel free to configure to look for more to compile reload as your app scales.
