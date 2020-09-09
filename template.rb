@@ -1,6 +1,6 @@
 # Template: Rails, Tailwind, Devise & Simple Form
 # Instructions:
-# rails new myapp -d postgresql -m ../templates/tailwind-devise/template.rb
+# rails new myapp -d postgresql -m ../templates/rails/tailwind-devise/template.rb
 # OR rails new myapp -d postgresql -m template.rb
 ########################################
 
