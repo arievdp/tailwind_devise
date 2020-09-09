@@ -11,7 +11,7 @@ Based on https://github.com/justalever/kickoff_tailwind, tweaked for simple_form
 - [font-awesome-sass](https://github.com/FortAwesome/font-awesome-sass)
 - [simple form](https://github.com/heartcombo/simple_form)
 - [byebug](https://github.com/deivid-rodriguez/pry-byebug)
-
+- [dot-env](https://github.com/bkeepers/dotenv)
 
 ### Creating a new app
 
@@ -23,7 +23,8 @@ $ rails new sample_app -d postgresql -m template.rb
 
 - Webpack support + Tailwind CSS configured in the `app/javascript` directory.
 - Devise with a new `username` and `name` field already migrated in. Enhanced views using Tailwind CSS.
-- Custom defaults for button and form elements
+- Custom defaults for button and form elements from https://github.com/justalever/kickoff_tailwind
+- Gitignore file comes configured, ready for your first push!
 
 ### Boot it up
 
