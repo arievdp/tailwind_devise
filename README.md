@@ -9,7 +9,7 @@ Based on https://github.com/justalever/kickoff_tailwind, tweaked for simple_form
 - [devise](https://github.com/plataformatec/devise)
 - [name_of_person](https://github.com/basecamp/name_of_person)
 - [font-awesome-sass](https://github.com/FortAwesome/font-awesome-sass)
-- [simple form](https://github.com/heartcombo/simple_form)
+- [simple_form](https://github.com/heartcombo/simple_form)
 - [byebug](https://github.com/deivid-rodriguez/pry-byebug)
 - [dot-env](https://github.com/bkeepers/dotenv)
 
