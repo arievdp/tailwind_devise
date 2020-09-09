@@ -1,9 +1,10 @@
 @tailwind base;
 @tailwind components;
 
+/* See https://tailwindcss.com/docs/adding-base-styles#using-css */
 /*! purgecss start ignore */
-@import "components/buttons";
-@import "components/forms";
+@import "components/index";
+@import "config/index";
 /*! purgecss end ignore */
 
 @tailwind utilities;

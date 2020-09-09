@@ -1,32 +1,36 @@
-=begin
-Template Name: Kickoff - Tailwind CSS
-Author: Andy Leverenz
-Author URI: https://web-crunch.com
-Instructions: $ rails new myapp -d <postgresql, mysql, sqlite3> -m template.rb
-=end
+# Template: Rails, Tailwind, Devise & Simple Form
+# Instructions:
+# rails new myapp -d postgresql -m ../templates/tailwind-devise/template.rb
+# OR rails new myapp -d postgresql -m template.rb
+########################################
 
 def source_paths
   [File.expand_path(File.dirname(__FILE__))]
 end
 
 def add_gems
-  gem 'devise', '~> 4.7', '>= 4.7.2'
-  gem 'friendly_id', '~> 5.3'
-  gem 'sidekiq', '~> 6.1', '>= 6.1.1'
-  gem 'name_of_person', '~> 1.1', '>= 1.1.1'
+  inject_into_file 'Gemfile', before: 'group :development, :test do' do
+    <<~RUBY
+      gem 'devise'
+      gem 'name_of_person', '~> 1.1', '>= 1.1.1'
+      gem 'font-awesome-sass'
+      gem 'simple_form'
+    RUBY
+  end
+
+  inject_into_file 'Gemfile', after: 'group :development, :test do' do
+    <<-RUBY
+    gem 'pry-byebug'
+    gem 'pry-rails'
+    gem 'dotenv-rails'
+    RUBY
+  end
 end
 
-def add_users
-  # Install Devise
+def add_devise_users
   generate "devise:install"
-
-  # Configure Devise
   environment "config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }",
               env: 'development'
-
-  route "root to: 'home#index'"
-
-  # Create Devise User
   generate :devise, "User", "first_name", "last_name", "admin:boolean"
 
   # set admin boolean to false by default
@@ -37,6 +41,10 @@ def add_users
 
   # name_of_person gem
   append_to_file("app/models/user.rb", "\nhas_person_name\n", after: "class User < ApplicationRecord")
+end
+
+def add_simple_form
+  generate "simple_form:install"
 end
 
 def copy_templates
@@ -67,54 +75,71 @@ def remove_app_css
   remove_file "app/assets/stylesheets/application.css"
 end
 
-def add_sidekiq
-  environment "config.active_job.queue_adapter = :sidekiq"
-
-  insert_into_file "config/routes.rb",
-    "require 'sidekiq/web'\n\n",
-    before: "Rails.application.routes.draw do"
-
-  content = <<-RUBY
-    authenticate :user, lambda { |u| u.admin? } do
-      mount Sidekiq::Web => '/sidekiq'
+def generate_pages_controller
+  generate(:controller, 'pages', '--skip-routes', '--no-test-framework')
+  run 'rm app/controllers/pages_controller.rb'
+  file 'app/controllers/pages_controller.rb', <<~RUBY
+    class PagesController < ApplicationController
+      # skip_before_action :authenticate_user!, only: [ :home ]
+      def home
+      end
     end
   RUBY
-  insert_into_file "config/routes.rb", "#{content}\n\n", after: "Rails.application.routes.draw do\n"
 end
 
-def add_foreman
-  copy_file "Procfile"
-end
-
-def add_friendly_id
-  generate "friendly_id"
+def git_ignore
+  append_file '.gitignore', <<~TXT
+    # Ignore .env file containing credentials.
+    .env*
+    # Ignore Mac and Linux file system files
+    *.swp
+    .DS_Store
+  TXT
 end
 
 # Main setup
+########################################
 source_paths
 
 add_gems
 
 after_bundle do
-  add_users
+  add_devise_users
+  add_simple_form
   remove_app_css
-  add_sidekiq
-  add_foreman
   copy_templates
   add_tailwind
-  add_friendly_id
   copy_postcss_config
+  generate_pages_controller
+  git_ignore
 
   # Migrate
-  rails_command "db:create"
-  rails_command "db:migrate"
+  ########################################
+  rails_command 'db:drop db:create db:migrate'
+
+  # Routes
+  ########################################
+  route "root to: 'pages#home'"
+
+  # Create ENV file
+  ########################################
+  run 'touch .env'
+
+  # First commit
+  ########################################
 
   git :init
   git add: "."
-  git commit: %Q{ -m "Initial commit" }
+  git commit: %Q{ -m "Initial commit with tailwind & devise" }
 
+  # Fix puma config
+  ########################################
+  gsub_file('config/puma.rb', 'pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }', '# pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }')
+
+  # Complete!
+  ########################################
   say
-  say "Kickoff app successfully created! 👍", :green
+  say "Rails app with Tailwind & Devise successfully created! 👍", :green
   say
   say "Switch to your app by running:"
   say "$ cd #{app_name}", :yellow
